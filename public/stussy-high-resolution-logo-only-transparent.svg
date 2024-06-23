@@ -1,0 +1,123 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  version="1.1"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:svgjs="http://svgjs.dev/svgjs"
+  viewBox="563.99 286.13 870.71 870.71"
+>
+  <g transform="matrix(1,0,0,1,-0.6506935179837683,0.5777327935222729)">
+    <svg
+      viewBox="0 0 346 247"
+      data-background-color="#fefefe"
+      preserveAspectRatio="xMidYMid meet"
+      height="2000"
+      width="2000"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+      <g
+        id="tight-bounds"
+        transform="matrix(1,0,0,1,0.11256997861119089,-0.09999999999999432)"
+      >
+        <svg
+          viewBox="0 0 345.7748600427776 247.2"
+          height="247.2"
+          width="345.7748600427776"
+        >
+          <g>
+            <svg
+              viewBox="0 0 395.5199999999999 282.7635993776529"
+              height="247.2"
+              width="345.7748600427776"
+            >
+              <g transform="matrix(1,0,0,1,111.6078008653896,0)">
+                <svg
+                  viewBox="0 0 172.3043982692207 172.3043982692207"
+                  height="172.3043982692207"
+                  width="172.3043982692207"
+                >
+                  <g id="icon-0">
+                    <svg
+                      viewBox="0 0 172.3043982692207 172.3043982692207"
+                      height="172.3043982692207"
+                      width="172.3043982692207"
+                    >
+                      <g>
+                        <path
+                          transform="scale(1.72304,1.72304)"
+                          d="M30 100c-16.569 0-30-13.431-30-30v-40c0-16.569 13.431-30 30-30h40c16.569 0 30 13.431 30 30v40c0 16.569-13.431 30-30 30z"
+                          fill="#2a2f3e"
+                          fill-rule="nonzero"
+                          stroke="none"
+                          stroke-width="1"
+                          stroke-linecap="butt"
+                          stroke-linejoin="miter"
+                          stroke-miterlimit="10"
+                          stroke-dasharray=""
+                          stroke-dashoffset="0"
+                          font-family="none"
+                          font-weight="none"
+                          font-size="none"
+                          text-anchor="none"
+                          style="mix-blend-mode: normal"
+                          data-fill-palette-color="accent"
+                        ></path>
+                      </g>
+                      <g
+                        transform="matrix(1,0,0,1,34.460879653844145,34.460879653844145)"
+                      >
+                        <svg
+                          viewBox="0 0 103.38263896153242 103.38263896153242"
+                          height="103.38263896153242"
+                          width="103.38263896153242"
+                        >
+                          <g>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns:xlink="http://www.w3.org/1999/xlink"
+                              version="1.1"
+                              x="0"
+                              y="0"
+                              viewBox="0 0 26 26"
+                              style="enable-background: new 0 0 26 26"
+                              xml:space="preserve"
+                              height="103.38263896153242"
+                              width="103.38263896153242"
+                              class="icon-dxe-0"
+                              data-fill-palette-color="quaternary"
+                              id="dxe-0"
+                            >
+                              <g
+                                fill="#ec9645"
+                                data-fill-palette-color="quaternary"
+                              >
+                                <path
+                                  d="M13 0C5.82 0 0 5.82 0 13S5.82 26 13 26 26 20.18 26 13 20.18 0 13 0M11.248 20.07C10.077 21.242 8.093 21.157 5.945 19.01 3.798 16.862 4.178 13 4.178 13S8.04 12.62 10.188 14.768C12.335 16.915 12.42 18.899 11.248 20.07M10 9.5C10 6.463 13 4 13 4S16 6.463 16 9.5 14.656 14 13 14 10 12.537 10 9.5M20.055 19.01C17.907 21.157 15.923 21.242 14.752 20.07 13.58 18.899 13.665 16.915 15.812 14.767 17.96 12.62 21.822 13 21.822 13S22.202 16.862 20.055 19.01"
+                                  fill="#ec9645"
+                                  data-fill-palette-color="quaternary"
+                                ></path>
+                              </g>
+                            </svg>
+                          </g>
+                        </svg>
+                      </g>
+                    </svg>
+                  </g>
+                </svg>
+              </g>
+              <g></g>
+            </svg>
+          </g>
+          <defs></defs>
+        </svg>
+        <rect
+          width="345.7748600427776"
+          height="247.2"
+          fill="none"
+          stroke="none"
+          visibility="hidden"
+        ></rect>
+      </g>
+    </svg>
+  </g>
+</svg>
