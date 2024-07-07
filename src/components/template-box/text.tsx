@@ -1,28 +1,23 @@
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "../ui/separator";
-import {
-  FontItalicIcon,
-  UnderlineIcon,
-  StrikethroughIcon,
-  OverlineIcon,
-} from "@radix-ui/react-icons";
 
-export default function Text(props) {
+import {
+  Input,
+  Select,
+  SelectItem,
+  Switch,
+  Divider,
+  Checkbox,
+  CheckboxGroup,
+} from "@nextui-org/react";
+import { useAppContext } from "@/app/AppProviders";
+
+import { FaItalic, FaUnderline, FaStrikethrough } from "react-icons/fa";
+import { MdFormatOverline } from "react-icons/md";
+
+export function Text({ id }: { id: string }) {
   return (
     <span
-      id={props.id}
+      id={id}
       style={{
         position: "absolute",
         left: "0px",
@@ -44,7 +39,8 @@ export default function Text(props) {
   );
 }
 
-export default function TextProperties(props) {
+export function TextProperties({ id }: { id: string }) {
+  const { selectedObject }: { selectedObject: string } = useAppContext();
   const [zIndex, setZIndex] = useState(1);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -82,334 +78,253 @@ export default function TextProperties(props) {
   const [backgroundSize, setBackgroundSize] = useState("auto");
   const [backgroundCustomSize, setBackgroundCustomSize] = useState(100);
   const [background, setBackground] = useState("none");
+  const [decoraction, setDecoration] = useState(Array<string>());
 
-  const textCanvas = document.getElementById(
-    "canvas-" + props.id.split("-")[1]
-  );
+  const textCanvas = document.getElementById("canvas-" + id.split("-")[1]);
 
-  function readURL() {
-    console.log("canvas-" + props.id.split("-")[1]);
-    var file = document.getElementById(props.id + "src").files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      document.getElementById(
-        "canvas-" + props.id.split("-")[1]
-      ).style.backgroundImage = "url(" + reader.result + ")";
-      setSrc(reader.result);
-    };
-    if (file) {
-      reader.readAsDataURL(file);
-    } else {
+  function readURL(event: React.ChangeEvent<HTMLInputElement>): void {
+    if (event.target.files && event.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        if (textCanvas) {
+          if (textCanvas)
+            textCanvas.style.backgroundImage = `url(${e.target?.result})`;
+          setSrc(() => e.target?.result as string);
+        }
+      };
+      reader.readAsDataURL(event.target.files[0]);
     }
   }
 
   return (
-    <div style={{ display: "none" }} id={props.id} className="flex-col gap-y-3">
+    <div
+      style={{
+        display: selectedObject === id.split("-")[1] ? "block" : "none",
+      }}
+      id={id}
+      className="flex-col space-y-3 flex"
+    >
       <span className="text-center text-2xl font-bold">Base</span>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "zIndex"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Position Z :
-        </Label>
+      <Input
+        id={id + "zIndex"}
+        type="number"
+        label="Position Z"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(zIndex)}
+        onChange={(e) => {
+          setZIndex(() => Number(e.target.value));
+          if (textCanvas)
+            if (textCanvas) textCanvas.style.zIndex = e.target.value;
+        }}
+      />
+      <Input
+        id={id + "x"}
+        type="number"
+        label="Position X"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(x)}
+        onChange={(e) => {
+          setX(() => Number(e.target.value));
+          if (textCanvas)
+            if (textCanvas) textCanvas.style.left = e.target.value + "px";
+        }}
+      />
+      <Input
+        id={id + "y"}
+        type="number"
+        label="Position Y"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(y)}
+        onChange={(e) => {
+          setY(() => Number(e.target.value));
+          if (textCanvas) textCanvas.style.top = e.target.value + "px";
+        }}
+      />
+      <Input
+        id={id + "text"}
+        type="text"
+        label="Texte"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(text)}
+        onChange={(e) => {
+          setText(() => e.target.value);
+          if (textCanvas) textCanvas.textContent = e.target.value;
+        }}
+      />
+      <div className="grid grid-cols-2 items-center gap-x-2">
         <Input
-          id={props.id + "zIndex"}
-          type="number"
-          className="text-xl"
-          defaultValue={zIndex}
-          onChange={(e) => {
-            setZIndex(() => e.target.value);
-            textCanvas.style.zIndex = e.target.value;
+          id={id + "color"}
+          type="color"
+          label="Couleur"
+          labelPlacement="outside-left"
+          classNames={{
+            label: "w-20",
+            innerWrapper: "w-10",
           }}
-        />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label htmlFor={props.id + "x"} className="w-fit text-nowrap text-xl">
-          Position X :
-        </Label>
-        <Input
-          id={props.id + "x"}
-          type="number"
-          className="text-xl"
-          defaultValue={x}
+          defaultValue={String(color)}
           onChange={(e) => {
-            setX(() => e.target.value);
-            textCanvas.style.left = e.target.value + "px";
-          }}
-        />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label htmlFor={props.id + "y"} className="w-fit text-nowrap text-xl">
-          Position Y :
-        </Label>
-        <Input
-          id={props.id + "y"}
-          type="number"
-          className="text-xl"
-          defaultValue={y}
-          onChange={(e) => {
-            setY(() => e.target.value);
-            textCanvas.style.top = e.target.value + "px";
-          }}
-        />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "text"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Texte :
-        </Label>
-        <Input
-          id={props.id + "text"}
-          type="text"
-          className="text-xl"
-          defaultValue={text}
-          onChange={(e) => {
-            setText(() => e.target.value);
-            textCanvas.textContent = e.target.value;
-          }}
-        />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "color"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Couleur :
-        </Label>
-        <div className="grid grid-cols-2 items-center gap-x-2">
-          <Input
-            id={props.id + "color"}
-            type="color"
-            className="overflow-hidden p-0 text-xl"
-            defaultValue={color}
-            onChange={(e) => {
-              setColor(() => e.target.value);
+            setColor(() => e.target.value);
+            if (textCanvas)
               textCanvas.style.color =
                 e.target.value + colorOpacity.toString(16);
-            }}
-          />
-          <Input
-            id={props.id + "colorOpacity"}
-            type="number"
-            className="text-xl"
-            max={255}
-            min={0}
-            defaultValue={colorOpacity}
-            onChange={(e) => {
-              setColorOpacity(() => e.target.value);
+          }}
+        />
+        <Input
+          id={id + "colorOpacity"}
+          type="number"
+          classNames={{ label: "w-28" }}
+          max={255}
+          min={0}
+          defaultValue={String(colorOpacity)}
+          onChange={(e) => {
+            setColorOpacity(() => Number(e.target.value));
+            if (textCanvas)
               textCanvas.style.color =
                 color + Number(e.target.value).toString(16);
-            }}
-          />
-        </div>
+          }}
+        />
       </div>
-      <Separator />
+      <Divider />
       <span className="text-center text-2xl font-bold">Texte</span>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "size"}
-          className="w-fit text-nowrap text-xl"
+      <Input
+        id={id + "size"}
+        type="number"
+        label="Taille"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(size)}
+        onChange={(e) => {
+          setSize(() => Number(e.target.value));
+          if (textCanvas) textCanvas.style.fontSize = e.target.value + "px";
+        }}
+      />
+      <Input
+        id={id + "weight"}
+        type="number"
+        label="Épaisseur"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        step={100}
+        max={900}
+        min={100}
+        defaultValue={String(weight)}
+        onChange={(e) => {
+          setWeight(() => Number(e.target.value));
+          if (textCanvas) textCanvas.style.fontWeight = e.target.value;
+        }}
+      />
+      <Select
+        id={id + "font"}
+        label="Police"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-24 self-center" }}
+        onChange={(e) => {
+          setFont(() => e.target.value);
+          if (textCanvas) textCanvas.style.fontFamily = e.target.value;
+        }}
+      >
+        <SelectItem key="none" className="text-lg">
+          None
+        </SelectItem>
+      </Select>
+      <CheckboxGroup
+        label="Variantes"
+        color="default"
+        value={decoraction}
+        onValueChange={(values) => {
+          setDecoration(values);
+          if (textCanvas) {
+            textCanvas.style.textDecoration = values.join(" ");
+            italic
+              ? (textCanvas.style.fontStyle = "italic")
+              : (textCanvas.style.fontStyle = "normal");
+          }
+        }}
+      >
+        <Checkbox
+          color="default"
+          aria-label="Italic"
+          value="italic"
+          defaultChecked={italic}
         >
-          Taille :
-        </Label>
-        <Input
-          id={props.id + "size"}
-          type="number"
-          className="text-xl"
-          defaultValue={size}
-          onChange={(e) => {
-            setSize(() => e.target.value + "px");
-            textCanvas.style.fontSize = e.target.value + "px";
-          }}
-        />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "weight"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Épaisseur :
-        </Label>
-        <Input
-          id={props.id + "weight"}
-          type="number"
-          className="text-xl"
-          step={100}
-          max={900}
-          min={100}
-          defaultValue={weight}
-          onChange={(e) => {
-            setWeight(() => e.target.value);
-            textCanvas.style.fontWeight = e.target.value;
-          }}
-        />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "font"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Police :
-        </Label>
-        <Select
-          onValueChange={(value) => {
-            setFont(() => value);
-            textCanvas.style.fontFamily = value;
-          }}
-        >
-          <SelectTrigger className="text-lg">
-            <SelectValue placeholder="Sélectionnez un style" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="none" className="text-lg">
-                None
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "italic"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Variantes :
-        </Label>
-        <ToggleGroup
-          type="multiple"
-          variant="outline"
-          onValueChange={(value) => {
-            if (value.includes("italic")) {
-              setItalic(() => true);
-              textCanvas.style.fontStyle = "italic";
-            } else {
-              setItalic(() => false);
-              textCanvas.style.fontStyle = "normal";
-            }
-            if (value.includes("underline")) setUnderline(() => true);
-            else setUnderline(() => false);
-            if (value.includes("line-through")) setLineThrough(() => true);
-            else setLineThrough(() => false);
-            if (value.includes("overline")) setOverline(() => true);
-            else setOverline(() => false);
-            textCanvas.style.textDecoration = value
-              .join(" ")
-              .replace("italic", "");
-          }}
-        >
-          <ToggleGroupItem
-            value="italic"
-            aria-label="Toggle italic"
-            defaultValue={italic}
-          >
-            <FontItalicIcon className="size-6" />
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="underline"
-            aria-label="Toggle underline"
-            defaultValue={underline}
-          >
-            <UnderlineIcon className="size-6" />
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="line-through"
-            aria-label="Toggle line-through"
-            className={lineThrough}
-          >
-            <StrikethroughIcon className="size-6" />
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="overline"
-            aria-label="Toggle overline"
-            defaultValue={overline}
-          >
-            <OverlineIcon className="size-6" />
-          </ToggleGroupItem>
-        </ToggleGroup>
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "text"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Letter spacing :
-        </Label>
-        <Input
-          id={props.id + "text"}
-          type="number"
-          className="text-xl"
-          defaultValue={letterSpacing}
-          onChange={(e) => {
-            console.log(e.target.value);
-            setLetterSpacing(() => e.target.value + "px");
+          <FaItalic />
+        </Checkbox>
+        <Checkbox value="underline" defaultChecked={underline}>
+          <FaUnderline />
+        </Checkbox>
+        <Checkbox value="line-through" defaultChecked={lineThrough}>
+          <FaStrikethrough />
+        </Checkbox>
+        <Checkbox value="overline" defaultChecked={overline}>
+          <MdFormatOverline />
+        </Checkbox>
+      </CheckboxGroup>
+      {/**fontStyle textDecoration */}
+      <Input
+        id={id + "text"}
+        type="number"
+        label="Letter spacing"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(letterSpacing)}
+        onChange={(e) => {
+          console.log(e.target.value);
+          setLetterSpacing(() => Number(e.target.value));
+          if (textCanvas)
             textCanvas.style.letterSpacing = e.target.value + "px";
-          }}
-        />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "text"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Texte :
-        </Label>
-        <Input
-          id={props.id + "text"}
-          type="text"
-          className="text-xl"
-          defaultValue={text}
-          onChange={(e) => {
-            setText(() => e.target.value);
-            textCanvas.textContent = e.target.value;
-          }}
-        />
-      </div>
-      <Separator />
+        }}
+      />
+      <Input
+        id={id + "text"}
+        type="text"
+        label="Texte"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(text)}
+        onChange={(e) => {
+          setText(() => e.target.value);
+          if (textCanvas) textCanvas.textContent = e.target.value;
+        }}
+      />
+      <Divider />
       <span className="text-center text-2xl font-bold">Ombre</span>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "shadow"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Activé :
-        </Label>
-        <Switch
-          id={props.id + "shadow"}
-          defaultValue={shadow}
-          onCheckedChange={(value) => {
-            const temp =
-              shadowColor +
-              Number(shadowOpacity).toString(16) +
-              " " +
-              shadowOffsetX +
-              "px " +
-              shadowOffsetY +
-              "px " +
-              shadowBlur +
-              "px";
-            setShadow(() => value);
-            setTextShadow(() => temp);
-            textCanvas.style.textShadow = value ? temp : "";
-          }}
-        />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "shadowColor"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Couleur :
-        </Label>
-        <div className="grid grid-cols-2 items-center gap-x-2">
+      Activé :
+      <Switch
+        id={id + "shadow"}
+        defaultValue={String(shadow)}
+        onValueChange={(value) => {
+          const temp =
+            shadowColor +
+            Number(shadowOpacity).toString(16) +
+            " " +
+            shadowOffsetX +
+            "px " +
+            shadowOffsetY +
+            "px " +
+            shadowBlur +
+            "px";
+          setShadow(() => value);
+          setTextShadow(() => temp);
+          if (textCanvas) textCanvas.style.textShadow = value ? temp : "";
+        }}
+      />
+      <div className="grid grid-cols-2 items-center gap-x-2">
+        <div className="flex">
           <Input
-            id={props.id + "shadowColor"}
+            id={id + "shadowColor"}
             type="color"
-            className="overflow-hidden p-0 text-xl"
-            defaultValue="black"
+            label="Couleur"
+            value={shadowColor}
+            labelPlacement="outside-left"
+            classNames={{
+              label: "w-20",
+              innerWrapper: "w-10",
+            }}
+            defaultValue={shadowColor}
             onChange={(e) => {
               const temp =
                 e.target.value +
@@ -423,16 +338,16 @@ export default function TextProperties(props) {
                 "px ";
               setShadowColor(() => e.target.value);
               setTextShadow(() => temp);
-              textCanvas.style.textShadow = temp;
+              if (textCanvas) textCanvas.style.textShadow = temp;
             }}
           />
           <Input
-            id={props.id + "shadowColorOpacity"}
+            id={id + "shadowColorOpacity"}
             type="number"
-            className="text-xl"
+            classNames={{ label: "w-28" }}
             max={255}
             min={0}
-            defaultValue={colorOpacity}
+            defaultValue={String(colorOpacity)}
             onChange={(e) => {
               const temp =
                 shadowColor +
@@ -445,24 +360,18 @@ export default function TextProperties(props) {
                 shadowBlur +
                 "px ";
               setTextShadow(() => temp);
-              setShadowOpacity(() => e.target.value);
-              textCanvas.style.textShadow = temp;
+              setShadowOpacity(() => Number(e.target.value));
+              if (textCanvas) textCanvas.style.textShadow = temp;
             }}
           />
         </div>
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "shadowBlur"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Flou :
-        </Label>
         <Input
-          id={props.id + "shadowBlur"}
+          id={id + "shadowBlur"}
           type="number"
-          className="text-xl"
-          defaultValue={0}
+          label="Flou"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
+          defaultValue={String(0)}
           onChange={(e) => {
             const temp =
               shadowColor +
@@ -474,24 +383,18 @@ export default function TextProperties(props) {
               "px " +
               e.target.value +
               "px ";
-            setShadowBlur(() => e.target.value);
+            setShadowBlur(() => Number(e.target.value));
             setTextShadow(() => temp);
-            textCanvas.style.textShadow = temp;
+            if (textCanvas) textCanvas.style.textShadow = temp;
           }}
         />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "shadowOffsetX"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Décallage X :
-        </Label>
         <Input
-          id={props.id + "shadowOffsetX"}
+          id={id + "shadowOffsetX"}
           type="number"
-          className="text-xl"
-          defaultValue={0}
+          label="Décallage X"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
+          defaultValue={String(0)}
           onChange={(e) => {
             const temp =
               shadowColor +
@@ -504,23 +407,17 @@ export default function TextProperties(props) {
               shadowBlur +
               "px ";
             setTextShadow(() => temp);
-            setShadowOffsetX(() => e.target.value);
-            textCanvas.style.textShadow = temp;
+            setShadowOffsetX(() => Number(e.target.value));
+            if (textCanvas) textCanvas.style.textShadow = temp;
           }}
         />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "shadowOffsetY"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Décallage Y :
-        </Label>
         <Input
-          id={props.id + "shadowOffsetY"}
+          id={id + "shadowOffsetY"}
           type="number"
-          className="text-xl"
-          defaultValue={0}
+          label="Décallage Y"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
+          defaultValue={String(0)}
           onChange={(e) => {
             const temp =
               shadowColor +
@@ -533,366 +430,292 @@ export default function TextProperties(props) {
               shadowBlur +
               "px ";
             setTextShadow(() => temp);
-            setShadowOffsetY(() => e.target.value);
-            textCanvas.style.textShadow = temp;
+            setShadowOffsetY(() => Number(e.target.value));
+            if (textCanvas) textCanvas.style.textShadow = temp;
           }}
         />
-      </div>
-      <Separator />
-      <span className="text-center text-2xl font-bold">Contour</span>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "textStokeWidth"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Épaisseur du contour:
-        </Label>
+        <Divider />
+        <span className="text-center text-2xl font-bold">Contour</span>
         <Input
-          id={props.id + "textStokeWidth"}
+          id={id + "textStokeWidth"}
           type="number"
-          className="text-xl"
-          defaultValue={textStokeWidth}
+          label="Épaisseur"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
+          defaultValue={String(textStokeWidth)}
           onChange={(e) => {
-            setTextStokeWidth(() => e.target.value);
-            textCanvas.style.webkitTextStrokeWidth = e.target.value + "px";
+            setTextStokeWidth(() => Number(e.target.value));
+            if (textCanvas)
+              textCanvas.style.webkitTextStrokeWidth = e.target.value + "px";
           }}
         />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "textStokeColor"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Couleur du contour :
-        </Label>
         <div className="grid grid-cols-2 items-center gap-x-2">
           <Input
-            id={props.id + "textStokeColor"}
+            id={id + "textStokeColor"}
             type="color"
-            className="overflow-hidden p-0 text-xl"
-            defaultValue={textStokeColor}
+            label="Couleur"
+            labelPlacement="outside-left"
+            classNames={{
+              label: "w-20",
+              innerWrapper: "w-10",
+            }}
+            defaultValue={String(textStokeColor)}
             onChange={(e) => {
               setTextStokeColor(() => e.target.value);
-              textCanvas.style.webkitTextStrokeColor =
-                e.target.value + Number(colorOpacity).toString(16);
+              if (textCanvas)
+                textCanvas.style.webkitTextStrokeColor =
+                  e.target.value + Number(colorOpacity).toString(16);
             }}
           />
           <Input
-            id={props.id + "textStokeColorTransparancy"}
+            id={id + "textStokeColorTransparancy"}
             type="number"
-            className="text-xl"
+            label="Opacité"
+            labelPlacement="outside-left"
+            classNames={{ label: "w-28" }}
             max={255}
             min={0}
-            defaultValue={textStrokeColorOpacity}
+            defaultValue={String(textStrokeColorOpacity)}
             onChange={(e) => {
-              setColorOpacity(() => e.target.value);
-              textCanvas.style.webkitTextStrokeColor =
-                color + Number(e.target.value).toString(16);
+              setColorOpacity(() => Number(e.target.value));
+              if (textCanvas)
+                textCanvas.style.webkitTextStrokeColor =
+                  color + Number(e.target.value).toString(16);
             }}
           />
         </div>
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "backgroundClip"}
-          className="w-fit text-nowrap text-xl"
-        />
         <Select
-          onValueChange={(value) => {
-            switch (value) {
+          id={id + "backgroundClip"}
+          label="Clip"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-24 self-center" }}
+          onChange={(e) => {
+            switch (e.target.value) {
               case "border-box":
                 setBackgroundClip(() => "border-box");
-                textCanvas.style.backgroundClip = "border-box";
+                if (textCanvas) textCanvas.style.backgroundClip = "border-box";
                 break;
               case "padding-box":
                 setBackgroundClip(() => "padding-box");
-                textCanvas.style.backgroundClip = "padding-box";
+                if (textCanvas) textCanvas.style.backgroundClip = "padding-box";
                 break;
               case "content-box":
                 setBackgroundClip(() => "content-box");
-                textCanvas.style.backgroundClip = "content-box";
+                if (textCanvas) textCanvas.style.backgroundClip = "content-box";
                 break;
               case "text":
                 setBackgroundClip(() => "text");
-                textCanvas.style.backgroundClip = "text";
+                if (textCanvas) textCanvas.style.backgroundClip = "text";
                 break;
 
               default:
                 break;
             }
           }}
-          defaultValue={backgroundClip}
+          defaultSelectedKeys={String(backgroundClip)}
         >
-          <SelectTrigger className="text-lg">
-            <SelectValue placeholder="Sélectionnez un style" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="border-box" className="text-lg">
-                Border box
-              </SelectItem>
-              <SelectItem value="padding-box" className="text-lg">
-                Padding box
-              </SelectItem>
-              <SelectItem value="content-box-box" className="text-lg">
-                Content box
-              </SelectItem>
-              <SelectItem value="text" className="text-lg">
-                Text
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
+          <SelectItem key="border-box" className="text-lg">
+            Border box
+          </SelectItem>
+          <SelectItem key="padding-box" className="text-lg">
+            Padding box
+          </SelectItem>
+          <SelectItem key="content-box-box" className="text-lg">
+            Content box
+          </SelectItem>
+          <SelectItem key="text" className="text-lg">
+            Text
+          </SelectItem>
         </Select>
-      </div>
-      <Separator />
-      <span className="text-center text-2xl font-bold">Fond</span>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "background"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Type fond :
-        </Label>
+        <Divider />
+        <span className="text-center text-2xl font-bold">Fond</span>
         <Select
-          id={props.id + "backgroundRepeat"}
-          onValueChange={(value) => {
-            switch (value) {
+          id={id + "backgroundRepeat"}
+          label="Type fond"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-24 self-center" }}
+          onChange={(e) => {
+            setBackground(() => e.target.value);
+            switch (e.target.value) {
               case "none":
-                setBackground(() => value);
-                textCanvas.style.backgroundColor = "unset";
-                textCanvas.style.backgroundImage = "unset";
+                if (textCanvas) textCanvas.style.backgroundColor = "unset";
+                if (textCanvas) textCanvas.style.backgroundImage = "unset";
                 break;
               case "image":
-                setBackground(() => value);
-                textCanvas.style.backgroundColor = "unset";
-                textCanvas.style.backgroundImage = "url(" + src + ")";
+                if (textCanvas) textCanvas.style.backgroundColor = "unset";
+                if (textCanvas)
+                  textCanvas.style.backgroundImage = "url(" + src + ")";
                 break;
               case "color":
-                setBackground(() => value);
-                textCanvas.style.backgroundColor =
-                  backgroundColor +
-                  Number(backgroundColorTransparancy).toString(16);
-                textCanvas.style.backgroundImage = "unset";
+                if (textCanvas)
+                  textCanvas.style.backgroundColor =
+                    backgroundColor +
+                    Number(backgroundColorTransparancy).toString(16);
+                if (textCanvas) textCanvas.style.backgroundImage = "unset";
               default:
                 break;
             }
           }}
         >
-          <SelectTrigger className="text-lg">
-            <SelectValue placeholder="Sélectionnez un style" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="none" className="text-lg">
-                None
-              </SelectItem>
-              <SelectItem value="image" className="text-lg">
-                Image
-              </SelectItem>
-              <SelectItem value="color" className="text-lg">
-                Color
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
+          <SelectItem key="none" className="text-lg">
+            None
+          </SelectItem>
+          <SelectItem key="image" className="text-lg">
+            Image
+          </SelectItem>
+          <SelectItem key="color" className="text-lg">
+            Color
+          </SelectItem>
         </Select>
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "src"}
-          className="w-full text-nowrap text-xl"
-        >
-          Source :
-        </Label>
-        <form enctype="multipart/form-data">
+        <form encType="multipart/form-data">
           <Input
-            id={props.id + "src"}
+            id={id + "src"}
             type="file"
-            className="text-xl"
+            label="Source"
+            labelPlacement="outside-left"
+            classNames={{ label: "w-28" }}
             onChange={readURL}
           />
         </form>
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "textStokeColor"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Couleur du fond :
-        </Label>
         <div className="grid grid-cols-2 items-center gap-x-2">
           <Input
-            id={props.id + "backgroundColor"}
+            id={id + "backgroundColor"}
             type="color"
-            className="overflow-hidden p-0 text-xl"
-            defaultValue={backgroundColor}
+            label="Couleur"
+            labelPlacement="outside-left"
+            classNames={{
+              label: "w-20",
+              innerWrapper: "w-10",
+            }}
+            defaultValue={String(backgroundColor)}
             onChange={(e) => {
               setTextStokeColor(() => e.target.value);
-              textCanvas.style.backgroundColor =
-                e.target.value +
-                Number(backgroundColorTransparancy).toString(16);
+              if (textCanvas)
+                textCanvas.style.backgroundColor =
+                  e.target.value +
+                  Number(backgroundColorTransparancy).toString(16);
             }}
           />
           <Input
-            id={props.id + "backgroundColorTransparancy"}
+            id={id + "backgroundColorTransparancy"}
             type="number"
-            className="text-xl"
+            label="Opacité"
+            labelPlacement="outside-left"
+            classNames={{ label: "w-28" }}
             max={255}
             min={0}
-            defaultValue={backgroundColorTransparancy}
+            defaultValue={String(backgroundColorTransparancy)}
             onChange={(e) => {
-              setColorOpacity(() => e.target.value);
-              textCanvas.style.backgroundColor =
-                backgroundColor + Number(e.target.value).toString(16);
+              setColorOpacity(() => Number(e.target.value));
+              if (textCanvas)
+                textCanvas.style.backgroundColor =
+                  backgroundColor + Number(e.target.value).toString(16);
             }}
           />
         </div>
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "xOffset"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Décallage X :
-        </Label>
         <Input
-          id={props.id + "xOffset"}
+          id={id + "xOffset"}
           type="number"
-          className="text-xl"
-          defaultValue={xOffset}
+          label="Décallage X"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
+          defaultValue={String(xOffset)}
           onChange={(e) => {
-            setXOffset(() => e.target.value);
-            textCanvas.style.backgroundPositionX = e.target.value + "px";
+            setXOffset(() => Number(e.target.value));
+            if (textCanvas)
+              textCanvas.style.backgroundPositionX = e.target.value + "px";
           }}
         />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "yOffset"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Décallage Y :
-        </Label>
         <Input
-          id={props.id + "yOffset"}
+          id={id + "yOffset"}
           type="number"
-          className="text-xl"
-          defaultValue={yOffset}
+          label="Décallage Y"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
+          defaultValue={String(yOffset)}
           onChange={(e) => {
-            setYOffset(() => e.target.value);
-            textCanvas.style.backgroundPositionY = e.target.value + "px";
+            setYOffset(() => Number(e.target.value));
+            if (textCanvas)
+              textCanvas.style.backgroundPositionY = e.target.value + "px";
           }}
         />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "backgroundRepeat"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Répétition :
-        </Label>
         <Select
-          id={props.id + "backgroundRepeat"}
-          onValueChange={(value) => {
-            setBackgroundRepeat(() => value);
-            textCanvas.style.backgroundRepeat = value;
+          id={id + "backgroundRepeat"}
+          label="Répétition"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-24 self-center" }}
+          onChange={(e) => {
+            setBackgroundRepeat(() => e.target.value);
+            if (textCanvas) textCanvas.style.backgroundRepeat = e.target.value;
           }}
         >
-          <SelectTrigger className="text-lg">
-            <SelectValue placeholder="Sélectionnez un style" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="no-repeat" className="text-lg">
-                No repeat
-              </SelectItem>
-              <SelectItem value="repeat" className="text-lg">
-                Repeat
-              </SelectItem>
-              <SelectItem value="space" className="text-lg">
-                Space
-              </SelectItem>
-              <SelectItem value="round" className="text-lg">
-                Round
-              </SelectItem>
-              <SelectItem value="repeat-x" className="text-lg">
-                Repeat x
-              </SelectItem>
-              <SelectItem value="repeat-y" className="text-lg">
-                Repeat y
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
+          <SelectItem key="no-repeat" className="text-lg">
+            No repeat
+          </SelectItem>
+          <SelectItem key="repeat" className="text-lg">
+            Repeat
+          </SelectItem>
+          <SelectItem key="space" className="text-lg">
+            Space
+          </SelectItem>
+          <SelectItem key="round" className="text-lg">
+            Round
+          </SelectItem>
+          <SelectItem key="repeat-x" className="text-lg">
+            Repeat x
+          </SelectItem>
+          <SelectItem key="repeat-y" className="text-lg">
+            Repeat y
+          </SelectItem>
         </Select>
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "backgroundSize"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Taille :
-        </Label>
         <Select
-          id={props.id + "backgroundSize"}
-          onValueChange={(value) => {
-            setBackgroundSize(() => value);
-            textCanvas.style.backgroundSize = value;
+          id={id + "backgroundSize"}
+          label="Taille"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-24 self-center" }}
+          onChange={(e) => {
+            setBackgroundSize(() => e.target.value);
+            if (textCanvas) textCanvas.style.backgroundSize = e.target.value;
           }}
         >
-          <SelectTrigger className="text-lg">
-            <SelectValue placeholder="Sélectionnez un style" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="cover" className="text-lg">
-                Cover
-              </SelectItem>
-              <SelectItem value="contain" className="text-lg">
-                Contain
-              </SelectItem>
-              <SelectItem value="custom" className="text-lg">
-                <Input type="number" />
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
+          <SelectItem key="cover" className="text-lg">
+            Cover
+          </SelectItem>
+          <SelectItem key="contain" className="text-lg">
+            Contain
+          </SelectItem>
+          <SelectItem key="custom" className="text-lg">
+            <Input type="number" />
+          </SelectItem>
         </Select>
-      </div>
-      <Separator />
-      <span className="text-center text-2xl font-bold">Autres</span>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "opacity"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Opacité :
-        </Label>
+        <Divider />
+        <span className="text-center text-2xl font-bold">Autres</span>
         <Input
-          id={props.id + "opacity"}
+          id={id + "opacity"}
           type="number"
-          className="text-xl"
+          label="Opacité"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
           max={100}
           min={0}
-          defaultValue={opacity}
+          defaultValue={String(opacity)}
           onChange={(e) => {
-            setOpacity(() => e.target.value);
-            textCanvas.style.opacity = e.target.value / 100;
+            setOpacity(() => Number(e.target.value));
+            if (textCanvas)
+              textCanvas.style.opacity = String(Number(e.target.value) / 100);
           }}
         />
-      </div>
-      <div className="grid grid-cols-2 items-center">
-        <Label
-          htmlFor={props.id + "rotation"}
-          className="w-fit text-nowrap text-xl"
-        >
-          Rotation :
-        </Label>
         <Input
-          id={props.id + "rotation"}
+          id={id + "rotation"}
           type="number"
-          className="text-xl"
-          defaultValue={rotation}
+          label="Rotation"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
+          defaultValue={String(rotation)}
           onChange={(e) => {
-            setRotation(() => e.target.value);
-            textCanvas.style.transform = `rotate(${e.target.value}deg)`;
+            setRotation(() => Number(e.target.value));
+            if (textCanvas)
+              textCanvas.style.transform = `rotate(${e.target.value}deg)`;
           }}
         />
       </div>

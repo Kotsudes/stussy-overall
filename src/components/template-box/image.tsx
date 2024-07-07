@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-
-import { Input, Select, SelectItem, Switch, Divider } from "@nextui-org/react";
+import { Input, Select, SelectItem, Divider } from "@nextui-org/react";
 import { useAppContext } from "@/app/AppProviders";
 
 export function Image({ id }: { id: string }) {

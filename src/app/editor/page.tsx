@@ -30,6 +30,7 @@ import {
   RectangleProperties,
 } from "@/components/template-box/rectangle";
 import { Image, ImageProperties } from "@/components/template-box/image";
+import { Text, TextProperties } from "@/components/template-box/text";
 import { CanvasObject } from "@/config/types/canvasObjects";
 
 export default function Editor() {
@@ -220,7 +221,24 @@ export default function Editor() {
             >
               Image
             </DropdownItem>
-            <DropdownItem key="text" startContent={icons.user}>
+            <DropdownItem
+              key="text"
+              startContent={icons.user}
+              onClick={() => {
+                const id = makeid(10);
+                setObjects(() => [
+                  ...objects,
+                  {
+                    id: id,
+                    // eslint-disable-next-line jsx-a11y/alt-text
+                    canvas: <Text id={"canvas-" + id} key={id} />,
+                    style: <TextProperties id={"properties-" + id} key={id} />,
+                    name: "Text",
+                    hidden: false,
+                  },
+                ]);
+              }}
+            >
               Text
             </DropdownItem>
             <DropdownItem key="groupText" startContent={icons.user}>

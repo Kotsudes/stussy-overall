@@ -1,5 +1,5 @@
 "use client";
-import { preview } from "@/config/preview";
+import { preview } from "@/config/types/preview";
 
 export default function Home() {
   addEventListener("storage", () => {

@@ -8,8 +8,8 @@ import {
   SelectItem,
   Textarea,
 } from "@nextui-org/react";
-import { ratios, Ratio } from "@/config/ratio";
-import { templates, Template } from "@/config/template";
+import { ratios, Ratio } from "@/config/types/ratio";
+import { templates, Template } from "@/config/types/template";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
