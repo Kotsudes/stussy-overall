@@ -76,11 +76,7 @@ export default function Poster() {
         >
           {(template: Template) => {
             return (
-              <SelectItem
-                key={template.value}
-                key={template.value}
-                textValue={template.value}
-              >
+              <SelectItem key={template.value} textValue={template.value}>
                 <div className="flex gap-2 items-center">
                   <div className="flex-shrink-0 size-10 bg-primary rounded-full grid items-center justify-center">
                     <span className="text-black font-bold">
@@ -171,11 +167,7 @@ export default function Poster() {
         >
           {(ratio: Ratio) => {
             return (
-              <SelectItem
-                key={ratio.value}
-                key={ratio.value}
-                textValue={ratio.value}
-              >
+              <SelectItem key={ratio.value} textValue={ratio.value}>
                 <div className="flex gap-2 items-center">
                   <div className="flex-shrink-0 size-10 bg-primary rounded-full grid items-center justify-center">
                     <span className="text-black font-bold">{ratio.format}</span>

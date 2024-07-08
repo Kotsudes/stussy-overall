@@ -72,6 +72,8 @@ export function TextProperties({ id }: { id: string }) {
   const [backgroundColor, setBackgroundColor] = useState("#FFFFFF00");
   const [backgroundColorTransparancy, setBackgroundColorTransparancy] =
     useState(255);
+  const [imageHeight, setImageHeight] = useState(100);
+  const [imageWidth, setImageWidth] = useState(100);
   const [xOffset, setXOffset] = useState(0);
   const [yOffset, setYOffset] = useState(0);
   const [backgroundRepeat, setBackgroundRepeat] = useState("no-repeat");
@@ -87,8 +89,7 @@ export function TextProperties({ id }: { id: string }) {
       const reader = new FileReader();
       reader.onload = function (e) {
         if (textCanvas) {
-          if (textCanvas)
-            textCanvas.style.backgroundImage = `url(${e.target?.result})`;
+          textCanvas.style.backgroundImage = `url(${e.target?.result})`;
           setSrc(() => e.target?.result as string);
         }
       };
@@ -155,7 +156,7 @@ export function TextProperties({ id }: { id: string }) {
           if (textCanvas) textCanvas.textContent = e.target.value;
         }}
       />
-      <div className="grid grid-cols-2 items-center gap-x-2">
+      <div className="flex">
         <Input
           id={id + "color"}
           type="color"
@@ -165,12 +166,14 @@ export function TextProperties({ id }: { id: string }) {
             label: "w-20",
             innerWrapper: "w-10",
           }}
-          defaultValue={String(color)}
+          defaultValue={color}
+          value={color}
           onChange={(e) => {
             setColor(() => e.target.value);
             if (textCanvas)
-              textCanvas.style.color =
-                e.target.value + colorOpacity.toString(16);
+              textCanvas.style.color = String(
+                e.target.value + colorOpacity.toString(16)
+              );
           }}
         />
         <Input
@@ -179,12 +182,14 @@ export function TextProperties({ id }: { id: string }) {
           classNames={{ label: "w-28" }}
           max={255}
           min={0}
+          value={String(colorOpacity)}
           defaultValue={String(colorOpacity)}
           onChange={(e) => {
             setColorOpacity(() => Number(e.target.value));
             if (textCanvas)
-              textCanvas.style.color =
-                color + Number(e.target.value).toString(16);
+              textCanvas.style.color = String(
+                color + Number(e.target.value).toString(16)
+              );
           }}
         />
       </div>
@@ -231,39 +236,60 @@ export function TextProperties({ id }: { id: string }) {
           None
         </SelectItem>
       </Select>
-      <CheckboxGroup
-        label="Variantes"
-        color="default"
-        value={decoraction}
-        onValueChange={(values) => {
-          setDecoration(values);
-          if (textCanvas) {
-            textCanvas.style.textDecoration = values.join(" ");
-            italic
-              ? (textCanvas.style.fontStyle = "italic")
-              : (textCanvas.style.fontStyle = "normal");
-          }
-        }}
-      >
+      <div className="flex gap-x-2">
         <Checkbox
           color="default"
           aria-label="Italic"
           value="italic"
           defaultChecked={italic}
+          onChange={(e) => {
+            setItalic(e.target.checked);
+            if (textCanvas) {
+              textCanvas.style.fontStyle = e.target.checked
+                ? "italic"
+                : "normal";
+            }
+          }}
         >
           <FaItalic />
         </Checkbox>
-        <Checkbox value="underline" defaultChecked={underline}>
-          <FaUnderline />
-        </Checkbox>
-        <Checkbox value="line-through" defaultChecked={lineThrough}>
-          <FaStrikethrough />
-        </Checkbox>
-        <Checkbox value="overline" defaultChecked={overline}>
-          <MdFormatOverline />
-        </Checkbox>
-      </CheckboxGroup>
-      {/**fontStyle textDecoration */}
+        <CheckboxGroup
+          color="default"
+          value={decoraction}
+          orientation="horizontal"
+          onValueChange={(values) => {
+            setDecoration(values);
+            if (textCanvas) {
+              textCanvas.style.textDecoration = values.join(" ");
+              italic
+                ? (textCanvas.style.fontStyle = "italic")
+                : (textCanvas.style.fontStyle = "normal");
+            }
+          }}
+        >
+          <Checkbox
+            value="underline"
+            defaultChecked={underline}
+            aria-label="Underline"
+          >
+            <FaUnderline />
+          </Checkbox>
+          <Checkbox
+            value="line-through"
+            defaultChecked={lineThrough}
+            aria-label="Line through"
+          >
+            <FaStrikethrough />
+          </Checkbox>
+          <Checkbox
+            value="overline"
+            defaultChecked={overline}
+            aria-label="Overline"
+          >
+            <MdFormatOverline />
+          </Checkbox>
+        </CheckboxGroup>
+      </div>
       <Input
         id={id + "text"}
         type="number"
@@ -278,21 +304,9 @@ export function TextProperties({ id }: { id: string }) {
             textCanvas.style.letterSpacing = e.target.value + "px";
         }}
       />
-      <Input
-        id={id + "text"}
-        type="text"
-        label="Texte"
-        labelPlacement="outside-left"
-        classNames={{ label: "w-28" }}
-        defaultValue={String(text)}
-        onChange={(e) => {
-          setText(() => e.target.value);
-          if (textCanvas) textCanvas.textContent = e.target.value;
-        }}
-      />
       <Divider />
-      <span className="text-center text-2xl font-bold">Ombre</span>
-      Activé :
+      <span className="text-center text-2xl font-bold pr-2">Ombre</span>
+
       <Switch
         id={id + "shadow"}
         defaultValue={String(shadow)}
@@ -312,413 +326,449 @@ export function TextProperties({ id }: { id: string }) {
           if (textCanvas) textCanvas.style.textShadow = value ? temp : "";
         }}
       />
-      <div className="grid grid-cols-2 items-center gap-x-2">
-        <div className="flex">
-          <Input
-            id={id + "shadowColor"}
-            type="color"
-            label="Couleur"
-            value={shadowColor}
-            labelPlacement="outside-left"
-            classNames={{
-              label: "w-20",
-              innerWrapper: "w-10",
-            }}
-            defaultValue={shadowColor}
-            onChange={(e) => {
-              const temp =
-                e.target.value +
-                Number(shadowOpacity).toString(16) +
-                " " +
-                shadowOffsetX +
-                "px " +
-                shadowOffsetY +
-                "px " +
-                shadowBlur +
-                "px ";
-              setShadowColor(() => e.target.value);
-              setTextShadow(() => temp);
-              if (textCanvas) textCanvas.style.textShadow = temp;
-            }}
-          />
-          <Input
-            id={id + "shadowColorOpacity"}
-            type="number"
-            classNames={{ label: "w-28" }}
-            max={255}
-            min={0}
-            defaultValue={String(colorOpacity)}
-            onChange={(e) => {
-              const temp =
-                shadowColor +
-                Number(e.target.value).toString(16) +
-                " " +
-                shadowOffsetX +
-                "px " +
-                shadowOffsetY +
-                "px " +
-                shadowBlur +
-                "px ";
-              setTextShadow(() => temp);
-              setShadowOpacity(() => Number(e.target.value));
-              if (textCanvas) textCanvas.style.textShadow = temp;
-            }}
-          />
-        </div>
+      <div className="flex">
         <Input
-          id={id + "shadowBlur"}
-          type="number"
-          label="Flou"
+          id={id + "shadowColor"}
+          type="color"
+          label="Couleur"
+          value={shadowColor}
           labelPlacement="outside-left"
-          classNames={{ label: "w-28" }}
-          defaultValue={String(0)}
+          classNames={{
+            label: "w-20",
+            innerWrapper: "w-10",
+          }}
+          defaultValue={shadowColor}
           onChange={(e) => {
             const temp =
-              shadowColor +
+              e.target.value +
               Number(shadowOpacity).toString(16) +
               " " +
               shadowOffsetX +
               "px " +
               shadowOffsetY +
               "px " +
-              e.target.value +
+              shadowBlur +
               "px ";
-            setShadowBlur(() => Number(e.target.value));
+            setShadowColor(() => e.target.value);
             setTextShadow(() => temp);
             if (textCanvas) textCanvas.style.textShadow = temp;
           }}
         />
         <Input
-          id={id + "shadowOffsetX"}
+          id={id + "shadowColorOpacity"}
           type="number"
-          label="Décallage X"
-          labelPlacement="outside-left"
           classNames={{ label: "w-28" }}
-          defaultValue={String(0)}
+          max={255}
+          min={0}
+          defaultValue={String(colorOpacity)}
           onChange={(e) => {
             const temp =
               shadowColor +
-              Number(shadowOpacity).toString(16) +
+              Number(e.target.value).toString(16) +
               " " +
-              e.target.value +
+              shadowOffsetX +
               "px " +
               shadowOffsetY +
               "px " +
               shadowBlur +
               "px ";
             setTextShadow(() => temp);
-            setShadowOffsetX(() => Number(e.target.value));
+            setShadowOpacity(() => Number(e.target.value));
             if (textCanvas) textCanvas.style.textShadow = temp;
           }}
         />
+      </div>
+      <Input
+        id={id + "shadowBlur"}
+        type="number"
+        label="Flou"
+        min={0}
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(0)}
+        onChange={(e) => {
+          const temp =
+            shadowColor +
+            Number(shadowOpacity).toString(16) +
+            " " +
+            shadowOffsetX +
+            "px " +
+            shadowOffsetY +
+            "px " +
+            e.target.value +
+            "px ";
+          setShadowBlur(() => Number(e.target.value));
+          setTextShadow(() => temp);
+          if (textCanvas) textCanvas.style.textShadow = temp;
+        }}
+      />
+      <Input
+        id={id + "shadowOffsetX"}
+        type="number"
+        label="Décallage X"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(0)}
+        onChange={(e) => {
+          const temp =
+            shadowColor +
+            Number(shadowOpacity).toString(16) +
+            " " +
+            e.target.value +
+            "px " +
+            shadowOffsetY +
+            "px " +
+            shadowBlur +
+            "px ";
+          setTextShadow(() => temp);
+          setShadowOffsetX(() => Number(e.target.value));
+          if (textCanvas) textCanvas.style.textShadow = temp;
+        }}
+      />
+      <Input
+        id={id + "shadowOffsetY"}
+        type="number"
+        label="Décallage Y"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(0)}
+        onChange={(e) => {
+          const temp =
+            shadowColor +
+            Number(shadowOpacity).toString(16) +
+            " " +
+            shadowOffsetX +
+            "px " +
+            e.target.value +
+            "px " +
+            shadowBlur +
+            "px ";
+          setTextShadow(() => temp);
+          setShadowOffsetY(() => Number(e.target.value));
+          if (textCanvas) textCanvas.style.textShadow = temp;
+        }}
+      />
+      <Divider />
+      <span className="text-center text-2xl font-bold">Contour</span>
+      <Input
+        id={id + "textStokeWidth"}
+        type="number"
+        label="Épaisseur"
+        min={0}
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(textStokeWidth)}
+        onChange={(e) => {
+          setTextStokeWidth(() => Number(e.target.value));
+          if (textCanvas)
+            textCanvas.style.webkitTextStrokeWidth = e.target.value + "px";
+        }}
+      />
+      <div className="flex">
         <Input
-          id={id + "shadowOffsetY"}
-          type="number"
-          label="Décallage Y"
+          id={id + "textStokeColor"}
+          type="color"
+          label="Couleur"
           labelPlacement="outside-left"
-          classNames={{ label: "w-28" }}
-          defaultValue={String(0)}
-          onChange={(e) => {
-            const temp =
-              shadowColor +
-              Number(shadowOpacity).toString(16) +
-              " " +
-              shadowOffsetX +
-              "px " +
-              e.target.value +
-              "px " +
-              shadowBlur +
-              "px ";
-            setTextShadow(() => temp);
-            setShadowOffsetY(() => Number(e.target.value));
-            if (textCanvas) textCanvas.style.textShadow = temp;
+          classNames={{
+            label: "w-20",
+            innerWrapper: "w-10",
           }}
-        />
-        <Divider />
-        <span className="text-center text-2xl font-bold">Contour</span>
-        <Input
-          id={id + "textStokeWidth"}
-          type="number"
-          label="Épaisseur"
-          labelPlacement="outside-left"
-          classNames={{ label: "w-28" }}
-          defaultValue={String(textStokeWidth)}
+          defaultValue={String(textStokeColor)}
           onChange={(e) => {
-            setTextStokeWidth(() => Number(e.target.value));
+            setTextStokeColor(() => e.target.value);
             if (textCanvas)
-              textCanvas.style.webkitTextStrokeWidth = e.target.value + "px";
-          }}
-        />
-        <div className="grid grid-cols-2 items-center gap-x-2">
-          <Input
-            id={id + "textStokeColor"}
-            type="color"
-            label="Couleur"
-            labelPlacement="outside-left"
-            classNames={{
-              label: "w-20",
-              innerWrapper: "w-10",
-            }}
-            defaultValue={String(textStokeColor)}
-            onChange={(e) => {
-              setTextStokeColor(() => e.target.value);
-              if (textCanvas)
-                textCanvas.style.webkitTextStrokeColor =
-                  e.target.value + Number(colorOpacity).toString(16);
-            }}
-          />
-          <Input
-            id={id + "textStokeColorTransparancy"}
-            type="number"
-            label="Opacité"
-            labelPlacement="outside-left"
-            classNames={{ label: "w-28" }}
-            max={255}
-            min={0}
-            defaultValue={String(textStrokeColorOpacity)}
-            onChange={(e) => {
-              setColorOpacity(() => Number(e.target.value));
-              if (textCanvas)
-                textCanvas.style.webkitTextStrokeColor =
-                  color + Number(e.target.value).toString(16);
-            }}
-          />
-        </div>
-        <Select
-          id={id + "backgroundClip"}
-          label="Clip"
-          labelPlacement="outside-left"
-          classNames={{ label: "w-24 self-center" }}
-          onChange={(e) => {
-            switch (e.target.value) {
-              case "border-box":
-                setBackgroundClip(() => "border-box");
-                if (textCanvas) textCanvas.style.backgroundClip = "border-box";
-                break;
-              case "padding-box":
-                setBackgroundClip(() => "padding-box");
-                if (textCanvas) textCanvas.style.backgroundClip = "padding-box";
-                break;
-              case "content-box":
-                setBackgroundClip(() => "content-box");
-                if (textCanvas) textCanvas.style.backgroundClip = "content-box";
-                break;
-              case "text":
-                setBackgroundClip(() => "text");
-                if (textCanvas) textCanvas.style.backgroundClip = "text";
-                break;
-
-              default:
-                break;
-            }
-          }}
-          defaultSelectedKeys={String(backgroundClip)}
-        >
-          <SelectItem key="border-box" className="text-lg">
-            Border box
-          </SelectItem>
-          <SelectItem key="padding-box" className="text-lg">
-            Padding box
-          </SelectItem>
-          <SelectItem key="content-box-box" className="text-lg">
-            Content box
-          </SelectItem>
-          <SelectItem key="text" className="text-lg">
-            Text
-          </SelectItem>
-        </Select>
-        <Divider />
-        <span className="text-center text-2xl font-bold">Fond</span>
-        <Select
-          id={id + "backgroundRepeat"}
-          label="Type fond"
-          labelPlacement="outside-left"
-          classNames={{ label: "w-24 self-center" }}
-          onChange={(e) => {
-            setBackground(() => e.target.value);
-            switch (e.target.value) {
-              case "none":
-                if (textCanvas) textCanvas.style.backgroundColor = "unset";
-                if (textCanvas) textCanvas.style.backgroundImage = "unset";
-                break;
-              case "image":
-                if (textCanvas) textCanvas.style.backgroundColor = "unset";
-                if (textCanvas)
-                  textCanvas.style.backgroundImage = "url(" + src + ")";
-                break;
-              case "color":
-                if (textCanvas)
-                  textCanvas.style.backgroundColor =
-                    backgroundColor +
-                    Number(backgroundColorTransparancy).toString(16);
-                if (textCanvas) textCanvas.style.backgroundImage = "unset";
-              default:
-                break;
-            }
-          }}
-        >
-          <SelectItem key="none" className="text-lg">
-            None
-          </SelectItem>
-          <SelectItem key="image" className="text-lg">
-            Image
-          </SelectItem>
-          <SelectItem key="color" className="text-lg">
-            Color
-          </SelectItem>
-        </Select>
-        <form encType="multipart/form-data">
-          <Input
-            id={id + "src"}
-            type="file"
-            label="Source"
-            labelPlacement="outside-left"
-            classNames={{ label: "w-28" }}
-            onChange={readURL}
-          />
-        </form>
-        <div className="grid grid-cols-2 items-center gap-x-2">
-          <Input
-            id={id + "backgroundColor"}
-            type="color"
-            label="Couleur"
-            labelPlacement="outside-left"
-            classNames={{
-              label: "w-20",
-              innerWrapper: "w-10",
-            }}
-            defaultValue={String(backgroundColor)}
-            onChange={(e) => {
-              setTextStokeColor(() => e.target.value);
-              if (textCanvas)
-                textCanvas.style.backgroundColor =
-                  e.target.value +
-                  Number(backgroundColorTransparancy).toString(16);
-            }}
-          />
-          <Input
-            id={id + "backgroundColorTransparancy"}
-            type="number"
-            label="Opacité"
-            labelPlacement="outside-left"
-            classNames={{ label: "w-28" }}
-            max={255}
-            min={0}
-            defaultValue={String(backgroundColorTransparancy)}
-            onChange={(e) => {
-              setColorOpacity(() => Number(e.target.value));
-              if (textCanvas)
-                textCanvas.style.backgroundColor =
-                  backgroundColor + Number(e.target.value).toString(16);
-            }}
-          />
-        </div>
-        <Input
-          id={id + "xOffset"}
-          type="number"
-          label="Décallage X"
-          labelPlacement="outside-left"
-          classNames={{ label: "w-28" }}
-          defaultValue={String(xOffset)}
-          onChange={(e) => {
-            setXOffset(() => Number(e.target.value));
-            if (textCanvas)
-              textCanvas.style.backgroundPositionX = e.target.value + "px";
+              textCanvas.style.webkitTextStrokeColor =
+                e.target.value + Number(colorOpacity).toString(16);
           }}
         />
         <Input
-          id={id + "yOffset"}
-          type="number"
-          label="Décallage Y"
-          labelPlacement="outside-left"
-          classNames={{ label: "w-28" }}
-          defaultValue={String(yOffset)}
-          onChange={(e) => {
-            setYOffset(() => Number(e.target.value));
-            if (textCanvas)
-              textCanvas.style.backgroundPositionY = e.target.value + "px";
-          }}
-        />
-        <Select
-          id={id + "backgroundRepeat"}
-          label="Répétition"
-          labelPlacement="outside-left"
-          classNames={{ label: "w-24 self-center" }}
-          onChange={(e) => {
-            setBackgroundRepeat(() => e.target.value);
-            if (textCanvas) textCanvas.style.backgroundRepeat = e.target.value;
-          }}
-        >
-          <SelectItem key="no-repeat" className="text-lg">
-            No repeat
-          </SelectItem>
-          <SelectItem key="repeat" className="text-lg">
-            Repeat
-          </SelectItem>
-          <SelectItem key="space" className="text-lg">
-            Space
-          </SelectItem>
-          <SelectItem key="round" className="text-lg">
-            Round
-          </SelectItem>
-          <SelectItem key="repeat-x" className="text-lg">
-            Repeat x
-          </SelectItem>
-          <SelectItem key="repeat-y" className="text-lg">
-            Repeat y
-          </SelectItem>
-        </Select>
-        <Select
-          id={id + "backgroundSize"}
-          label="Taille"
-          labelPlacement="outside-left"
-          classNames={{ label: "w-24 self-center" }}
-          onChange={(e) => {
-            setBackgroundSize(() => e.target.value);
-            if (textCanvas) textCanvas.style.backgroundSize = e.target.value;
-          }}
-        >
-          <SelectItem key="cover" className="text-lg">
-            Cover
-          </SelectItem>
-          <SelectItem key="contain" className="text-lg">
-            Contain
-          </SelectItem>
-          <SelectItem key="custom" className="text-lg">
-            <Input type="number" />
-          </SelectItem>
-        </Select>
-        <Divider />
-        <span className="text-center text-2xl font-bold">Autres</span>
-        <Input
-          id={id + "opacity"}
+          id={id + "textStokeColorTransparancy"}
           type="number"
           label="Opacité"
           labelPlacement="outside-left"
           classNames={{ label: "w-28" }}
-          max={100}
+          max={255}
           min={0}
-          defaultValue={String(opacity)}
+          defaultValue={String(textStrokeColorOpacity)}
           onChange={(e) => {
-            setOpacity(() => Number(e.target.value));
+            setColorOpacity(() => Number(e.target.value));
             if (textCanvas)
-              textCanvas.style.opacity = String(Number(e.target.value) / 100);
-          }}
-        />
-        <Input
-          id={id + "rotation"}
-          type="number"
-          label="Rotation"
-          labelPlacement="outside-left"
-          classNames={{ label: "w-28" }}
-          defaultValue={String(rotation)}
-          onChange={(e) => {
-            setRotation(() => Number(e.target.value));
-            if (textCanvas)
-              textCanvas.style.transform = `rotate(${e.target.value}deg)`;
+              textCanvas.style.webkitTextStrokeColor =
+                color + Number(e.target.value).toString(16);
           }}
         />
       </div>
+      <Select
+        id={id + "backgroundClip"}
+        label="Clip"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-24 self-center" }}
+        onChange={(e) => {
+          switch (e.target.value) {
+            case "border-box":
+              setBackgroundClip(() => "border-box");
+              if (textCanvas) textCanvas.style.backgroundClip = "border-box";
+              break;
+            case "padding-box":
+              setBackgroundClip(() => "padding-box");
+              if (textCanvas) textCanvas.style.backgroundClip = "padding-box";
+              break;
+            case "content-box":
+              setBackgroundClip(() => "content-box");
+              if (textCanvas) textCanvas.style.backgroundClip = "content-box";
+              break;
+            case "text":
+              setBackgroundClip(() => "text");
+              if (textCanvas) textCanvas.style.backgroundClip = "text";
+              break;
+
+            default:
+              break;
+          }
+        }}
+        defaultSelectedKeys={String(backgroundClip)}
+      >
+        <SelectItem key="border-box" className="text-lg">
+          Border box
+        </SelectItem>
+        <SelectItem key="padding-box" className="text-lg">
+          Padding box
+        </SelectItem>
+        <SelectItem key="content-box-box" className="text-lg">
+          Content box
+        </SelectItem>
+        <SelectItem key="text" className="text-lg">
+          Text
+        </SelectItem>
+      </Select>
+      <Divider />
+      <span className="text-center text-2xl font-bold">Fond</span>
+      <Select
+        id={id + "backgroundRepeat"}
+        label="Type fond"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-24 self-center" }}
+        onChange={(e) => {
+          setBackground(() => e.target.value);
+          switch (e.target.value) {
+            case "none":
+              if (textCanvas) textCanvas.style.backgroundColor = "unset";
+              if (textCanvas) textCanvas.style.backgroundImage = "unset";
+              break;
+            case "image":
+              if (textCanvas) textCanvas.style.backgroundColor = "unset";
+              if (textCanvas)
+                textCanvas.style.backgroundImage = "url(" + src + ")";
+              break;
+            case "color":
+              if (textCanvas)
+                textCanvas.style.backgroundColor =
+                  backgroundColor +
+                  Number(backgroundColorTransparancy).toString(16);
+              if (textCanvas) textCanvas.style.backgroundImage = "unset";
+            default:
+              break;
+          }
+        }}
+      >
+        <SelectItem key="none" className="text-lg">
+          None
+        </SelectItem>
+        <SelectItem key="image" className="text-lg">
+          Image
+        </SelectItem>
+        <SelectItem key="color" className="text-lg">
+          Color
+        </SelectItem>
+      </Select>
+      <form encType="multipart/form-data">
+        <Input
+          id={id + "src"}
+          type="file"
+          label="Source"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
+          onChange={(e) => readURL(e)}
+          // @ts-expect-error -- Known issue with NextUI's Input component
+          value={null}
+        />
+      </form>
+      <div className="flex">
+        <Input
+          id={id + "backgroundColor"}
+          type="color"
+          label="Couleur"
+          labelPlacement="outside-left"
+          classNames={{
+            label: "w-20",
+            innerWrapper: "w-10",
+          }}
+          defaultValue={String(backgroundColor)}
+          onChange={(e) => {
+            setTextStokeColor(() => e.target.value);
+            if (textCanvas)
+              textCanvas.style.backgroundColor =
+                e.target.value +
+                Number(backgroundColorTransparancy).toString(16);
+          }}
+        />
+        <Input
+          id={id + "backgroundColorTransparancy"}
+          type="number"
+          label="Opacité"
+          labelPlacement="outside-left"
+          classNames={{ label: "w-28" }}
+          max={255}
+          min={0}
+          defaultValue={String(backgroundColorTransparancy)}
+          onChange={(e) => {
+            setColorOpacity(() => Number(e.target.value));
+            if (textCanvas)
+              textCanvas.style.backgroundColor =
+                backgroundColor + Number(e.target.value).toString(16);
+          }}
+        />
+      </div>
+      <Input
+        id={id + "xOffset"}
+        type="number"
+        label="Décallage X"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(xOffset)}
+        onChange={(e) => {
+          setXOffset(() => Number(e.target.value));
+          if (textCanvas)
+            textCanvas.style.backgroundPositionX = e.target.value + "px";
+        }}
+      />
+      <Input
+        id={id + "yOffset"}
+        type="number"
+        label="Décallage Y"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(yOffset)}
+        onChange={(e) => {
+          setYOffset(() => Number(e.target.value));
+          if (textCanvas)
+            textCanvas.style.backgroundPositionY = e.target.value + "px";
+        }}
+      />
+      <Select
+        id={id + "backgroundRepeat"}
+        label="Répétition"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-24 self-center" }}
+        onChange={(e) => {
+          setBackgroundRepeat(() => e.target.value);
+          if (textCanvas) textCanvas.style.backgroundRepeat = e.target.value;
+        }}
+      >
+        <SelectItem key="no-repeat" className="text-lg">
+          No repeat
+        </SelectItem>
+        <SelectItem key="repeat" className="text-lg">
+          Repeat
+        </SelectItem>
+        <SelectItem key="space" className="text-lg">
+          Space
+        </SelectItem>
+        <SelectItem key="round" className="text-lg">
+          Round
+        </SelectItem>
+        <SelectItem key="repeat-x" className="text-lg">
+          Repeat x
+        </SelectItem>
+        <SelectItem key="repeat-y" className="text-lg">
+          Repeat y
+        </SelectItem>
+      </Select>
+      <Select
+        id={id + "backgroundSize"}
+        label="Taille"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-24 self-center" }}
+        onChange={(e) => {
+          setBackgroundSize(() => e.target.value);
+          if (textCanvas) textCanvas.style.backgroundSize = e.target.value;
+        }}
+      >
+        <SelectItem key="cover" className="text-lg">
+          Cover
+        </SelectItem>
+        <SelectItem key="contain" className="text-lg">
+          Contain
+        </SelectItem>
+        <SelectItem key="custom" className="text-lg">
+          Custom
+        </SelectItem>
+      </Select>
+      <div
+        className="flex gap-x-2"
+        style={{ display: backgroundSize === "custom" ? "block" : "none" }}
+      >
+        <Input
+          id={id + "imageHeight"}
+          type="number"
+          labelPlacement="outside-left"
+          label="Image height:"
+          classNames={{ label: "w-28" }}
+          defaultValue={String(imageHeight)}
+          value={String(imageHeight)}
+          onChange={(e) => {
+            setImageHeight(() => Number(e.target.value));
+            if (textCanvas)
+              textCanvas.style.backgroundSize = `${imageWidth}px ${e.target.value}px`;
+          }}
+        />
+
+        <Input
+          id={id + "imageWidth"}
+          type="number"
+          labelPlacement="outside-left"
+          label="Image width :"
+          classNames={{ label: "w-28" }}
+          defaultValue={String(imageWidth)}
+          value={String(imageWidth)}
+          onChange={(e) => {
+            setImageWidth(() => Number(e.target.value));
+            if (textCanvas)
+              textCanvas.style.backgroundSize = `${e.target.value}px ${imageHeight}px`;
+          }}
+        />
+      </div>
+      <Divider />
+      <span className="text-center text-2xl font-bold">Autres</span>
+      <Input
+        id={id + "opacity"}
+        type="number"
+        label="Opacité"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        max={100}
+        min={0}
+        defaultValue={String(opacity)}
+        onChange={(e) => {
+          setOpacity(() => Number(e.target.value));
+          if (textCanvas)
+            textCanvas.style.opacity = String(Number(e.target.value) / 100);
+        }}
+      />
+      <Input
+        id={id + "rotation"}
+        type="number"
+        label="Rotation"
+        labelPlacement="outside-left"
+        classNames={{ label: "w-28" }}
+        defaultValue={String(rotation)}
+        onChange={(e) => {
+          setRotation(() => Number(e.target.value));
+          if (textCanvas)
+            textCanvas.style.transform = `rotate(${e.target.value}deg)`;
+        }}
+      />
     </div>
   );
 }

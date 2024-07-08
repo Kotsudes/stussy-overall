@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import NextImage from "next/image";
 import { useSearchParams } from "next/navigation";
 import {
@@ -12,7 +12,11 @@ import {
   Image,
 } from "@nextui-org/react";
 
-export default function Layout({
+export default function Layout_Suspense() {
+  return Layout;
+}
+
+function Layout({
   children,
   tweet,
   poster,
@@ -25,7 +29,7 @@ export default function Layout({
   const type = searchParams.get("type");
 
   return (
-    <div>
+    <Suspense>
       <Navbar>
         <NavbarBrand className="space-x-2">
           <Image
@@ -65,6 +69,6 @@ export default function Layout({
         {type == "poster" ? poster : tweet}
         {children}
       </main>
-    </div>
+    </Suspense>
   );
 }
