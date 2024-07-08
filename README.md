@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Stussy
 
-## Getting Started
+Stussy est une application ayant pour but de simplifier le processus de production de contenu multimédia du type visuel (poster, bannière, etc) et textuel (tweet, petite annonce, etc). Son fonctionnement repose sur la création de template puis de leur réutilisation afin de créer des variations d'un même contenu.
 
-First, run the development server:
+# Organisation
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Le dossier [`src`](https://github.com/Kotsudes/stussy-overall/tree/main/src) contient le code source de la WebView créée par Tauri.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Le dossier [`src-tauri`](https://github.com/Kotsudes/stussy-overall/tree/main/src-tauri) contient le code source de l'application Tauri.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Développement
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Pour pouvoir développer et tester la plateforme chez vous, vous devez avoir [Node.js](https://nodejs.org/fr) (version 20.12.2+). Il vous faudra également rust et tauri. Vous trouverez toutes les instructions pour installer ces deux dépendances dans ce [tutoriel](https://tauri.app/fr/v1/guides/getting-started/prerequisites). Enfin, il vous faudra avoir installé [`pnpm`](https://pnpm.io/installation).
 
-## Learn More
+## Installation
 
-To learn more about Next.js, take a look at the following resources:
+Une fois les dépendances installés, il vous faudra vous placer dans un dossier qui accueillera le dossier du projet. Une fois cela fait, réalisez les instructions suivantes :
+- Cloner le projet avec la commande `git clone`
+- Naviguer dans le dossier du projet
+- Installer les dépendances avec `pnpm install`
+- Lancer l'application avec `pnpm tauri dev`
+> Attention ! La commande `pnpm dev` lance le serveur [Next.js](https://nextjs.org/) sans l'application Tauri
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Compilation
 
-## Deploy on Vercel
+Les instructions et spécificicités liées à la compilation sont expliqués dans la [documentation](https://tauri.app/fr/v1/guides/building/) de Tauri.
+Vous pouvez lancer la compilation de l'application avec la commande suivante : `pnpm tauri build`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Contribution
+Pour pouvoir contribuer au développement, vous devez faire partie de l'équipe technique du SGN.
+
+Voici les étapes pour développer une feature ou régler un bug:
+
+- Créer une issue décrivant le problème/la fonctionnalité de façon précise mais concise
+- Créer une branche nommée `dev-[numéro de l'issue]` et faites vos commit dessus
+- Créer une pull request en mettant au début de la description `resolve #[numéro de l'issue]`
+- Une fois la review effectuée, merger votre branche en faisant un "Squash and merge"
+
+# License
+Stussy n'est pas open source et il n'y a à ce jour, aucun projet de la rendre open source.
