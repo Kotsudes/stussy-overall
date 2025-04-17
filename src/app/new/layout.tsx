@@ -12,11 +12,7 @@ import {
   Image,
 } from "@nextui-org/react";
 
-export default function Layout_Suspense() {
-  return Layout;
-}
-
-function Layout({
+export default function Layout({
   children,
   tweet,
   poster,
@@ -29,7 +25,7 @@ function Layout({
   const type = searchParams.get("type");
 
   return (
-    <Suspense>
+    <div>
       <Navbar>
         <NavbarBrand className="space-x-2">
           <Image
@@ -69,6 +65,6 @@ function Layout({
         {type == "poster" ? poster : tweet}
         {children}
       </main>
-    </Suspense>
+    </div>
   );
 }

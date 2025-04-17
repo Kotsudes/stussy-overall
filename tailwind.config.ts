@@ -26,6 +26,7 @@ const config: Config = {
   },
   darkMode: "class",
   plugins: [
+    require("tailwind-clip-path"),
     nextui({
       themes: {
         light: {

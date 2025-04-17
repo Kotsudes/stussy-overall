@@ -55,7 +55,7 @@ export default function Home() {
         <Spacer y={3} />
       </aside>
       <main className="flex min-h-screen flex-col items-center justify-between p-24 border-l-1 border-l-divider">
-        a
+       
       </main>
     </div>
   );
