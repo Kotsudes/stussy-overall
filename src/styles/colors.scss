@@ -1,0 +1,64 @@
+@mixin light-theme {
+    --color-content: #282d3e;
+    --color-primary: #fe8e25;
+    --color-background: #ffffff;
+}
+
+@mixin dark-theme {
+    --color-content: hsl(0, 0%, 100%);
+    --color-content-soft: hsl(0, 0%, 80%);
+    --color-content-softer: hsl(0, 0%, 50%);
+    --color-content-softest: hsl(0, 0%, 30%);
+
+    --color-content-lite: hsla(0, 0%, 100%, 80%);
+    --color-content-liter: hsla(0, 0%, 100%, 50%);
+    --color-content-litest: hsla(0, 0%, 100%, 20%);
+
+    --color-primary: hsl(29, 100%, 57%);
+    --color-primary-lite: hsla(29, 100%, 57%, 80%);
+    --color-primary-liter: hsla(29, 100%, 57%, 50%);
+    --color-primary-litest: hsla(29, 100%, 57%, 25%);
+    --color-primary-background: hsl(29, 100%, 45%);
+
+    --color-background-0: hsl(226, 18%, 16%);
+    --color-background-1: hsl(226, 22%, 20%);
+    --color-background-2: hsl(226, 24%, 23%);
+
+    --gradient: linear-gradient(20deg, #ec7400 0%, #f5cc3f 50%, #ffffff 100%);
+
+    --color-success: hsl(96, 60%, 28%);
+    --color-success-content: hsl(96, 60%, 38%);
+    --color-success-background: hsl(96, 20%, 20%);
+
+    --color-error: hsl(0, 60%, 38%);
+    --color-error-lite: hsla(0, 60%, 38%, 80%);
+    --color-error-liter: hsla(0, 60%, 38%, 50%);
+    --color-error-litest: hsla(0, 60%, 38%, 20%);
+    --color-error-content: hsl(0, 60%, 50%);
+    --color-error-background: hsl(0, 20%, 20%);
+
+    --color-warning: hsl(55, 69%, 47%);
+    --color-warning-lite: hsla(55, 69%, 47%, 80%);
+    --color-warning-content: hsl(55, 69%, 50%);
+    --color-warning-background: hsl(55, 50%, 20%);
+
+    --color-info: hsl(200, 60%, 38%);
+    --color-info-content: hsl(200, 60%, 50%);
+    --color-info-background: hsl(200, 60%, 20%);
+}
+
+:root {
+    @include dark-theme;
+}
+
+[data-theme="dark"] {
+    @include dark-theme;
+}
+
+html, button {
+    color: var(--color-content);
+}
+
+a {
+    color: inherit;
+}
